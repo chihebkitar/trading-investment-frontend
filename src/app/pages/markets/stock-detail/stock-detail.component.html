@@ -1,0 +1,75 @@
+
+<div class="stock-detail-container" *ngIf="stock">
+    <h2>{{ stock.symbol }} - {{ stock.name }}</h2>
+  
+    <div class="basic-info">
+      <p>Price: {{ stock.currentPrice | number:'1.2-2' }}</p>
+      <p>Market Cap: {{ stock.marketCap | number:'1.0-0' }}</p>
+      <p>Dividend Rate: {{ stock.dividendRate }}</p>
+      <p>Sector: {{ stock.sector }}</p>
+      <p>Industry: {{ stock.industry }}</p>
+      <p>Daily Volume: {{ stock.dailyVolume | number:'1.0-0' }}</p>
+      <p>
+        Daily Change: 
+        <span [ngClass]="{
+          'pos-change': stock.dailyChangePercent && stock.dailyChangePercent > 0,
+          'neg-change': stock.dailyChangePercent && stock.dailyChangePercent < 0
+        }">
+          {{ stock.dailyChangePercent !== undefined ? (stock.dailyChangePercent | number:'1.2-2') : 'N/A' }}%
+        </span>
+      </p>
+    </div>
+  
+    <!-- Chart Interval Toggle -->
+    <div class="chart-interval">
+      <label>Chart Interval:</label>
+      <select [(ngModel)]="currentInterval" (change)="onIntervalChange(currentInterval)">
+        <option value="1d">1 Day</option>
+        <option value="5d">5 Days</option>
+        <option value="1mo">1 Month</option>
+        <option value="6mo">6 Months</option>
+        <option value="1y">1 Year</option>
+        <option value="max">Max</option>
+      </select>
+    </div>
+  
+    <apx-chart
+    [series]="candlestickOptions.series ?? []"
+    [chart]="candlestickOptions.chart ?? { type: 'candlestick', height: 350 }"
+    [xaxis]="candlestickOptions.xaxis ?? { type: 'datetime' }"
+    [yaxis]="candlestickOptions.yaxis ?? { tooltip: { enabled: true } }"
+    [title]="candlestickOptions.title ?? { text: 'Price Candlestick', align: 'left' }"
+  >
+  </apx-chart>
+  
+    <!-- Line Chart (ng2-charts) -->
+    <div style="display: block; height: 300px;">
+      <canvas
+        baseChart
+        [data]="chartData"
+        [type]="chartType"
+        [options]="chartOptions"
+      ></canvas>
+    </div>
+  
+    <!-- Buy/Sell Form -->
+    <div class="order-form">
+      <h3>Trade {{ stock.symbol }}</h3>
+      <form [formGroup]="orderForm" (ngSubmit)="placeOrder()">
+        <label>Order Type:</label>
+        <select formControlName="orderType">
+          <option value="BUY">BUY</option>
+          <option value="SELL">SELL</option>
+        </select>
+  
+        <label>Quantity:</label>
+        <input type="number" step="any" formControlName="quantity" />
+  
+        <label>or Amount (USD):</label>
+        <input type="number" step="any" formControlName="amount" />
+  
+        <button type="submit" [disabled]="orderForm.invalid">Place Order</button>
+      </form>
+    </div>
+  </div>
+  

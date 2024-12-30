@@ -1,0 +1,40 @@
+<div class="stock-home">
+  <h2>Trending Stocks</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Symbol</th>
+        <th>Name</th>
+        <th>Price</th>
+        <th>DailyChange%</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let s of trendingStocks" [routerLink]="['/markets/stocks', s.symbol]">
+        <td>{{ s.symbol }}</td>
+        <td>{{ s.name }}</td>
+        <td>{{ s.currentPrice | number:'1.2-2' }}</td>
+        <td [ngClass]="{
+          'pos-change': s.dailyChangePercent && s.dailyChangePercent > 0,
+          'neg-change': s.dailyChangePercent && s.dailyChangePercent < 0
+        }">
+          {{ s.dailyChangePercent !== undefined ? (s.dailyChangePercent | number:'1.2-2') : 'N/A' }}%
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="search-section">
+    <h2>Search Stocks</h2>
+    <input [(ngModel)]="query" placeholder="Symbol" (keyup.enter)="search()"/>
+    <button (click)="search()">Search</button>
+
+    <div *ngIf="searchResults.length > 0">
+      <ul>
+        <li *ngFor="let r of searchResults" [routerLink]="['/markets/stocks', r.symbol]">
+          {{ r.symbol }} - {{ r.name }}
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>

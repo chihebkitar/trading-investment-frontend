@@ -1,0 +1,56 @@
+<!-- src/app/components/portfolio/portfolio.component.html -->
+<div class="portfolio-container" *ngIf="portfolio && user">
+  <h2>{{ user.name }}'s Portfolio</h2>
+  <p>Balance: {{ user.balance | currency:'USD' }}</p>
+  <p>Total Portfolio Value: {{ portfolio.totalValue | currency:'USD' }}</p>
+
+  <!-- Resolution Toggle Buttons -->
+  <div class="resolution-select">
+    <button 
+      [ngClass]="{'active': selectedResolution === 'daily'}" 
+      (click)="onResolutionChange('daily')">
+      Daily
+    </button>
+    <button 
+      [ngClass]="{'active': selectedResolution === 'intraday'}" 
+      (click)="onResolutionChange('intraday')">
+      Intraday
+    </button>
+  </div>
+
+  <!-- Evolution Chart -->
+  <div class="portfolio-chart">
+    <canvas
+      baseChart
+      [data]="chartData"
+      [type]="chartType"
+      [options]="chartOptions"
+    ></canvas>
+  </div>
+
+  <h3>Positions</h3>
+  <table class="positions-table">
+    <thead>
+      <tr>
+        <th>Symbol</th>
+        <th>Name</th>
+        <th>Quantity</th>
+        <th>Avg Cost</th>
+        <th>Current Price</th>
+        <th>Unrealized P/L</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let pos of portfolio.positions">
+        <td>{{ pos.asset.symbol }}</td>
+        <td>{{ pos.asset.name }}</td>
+        <td>{{ pos.quantity | number:'1.2-2' }}</td>
+        <td>{{ pos.averageCost | currency:'USD' }}</td>
+        <td>{{ pos.asset.currentPrice | currency:'USD' }}</td>
+        <td>
+          {{ ((pos.asset.currentPrice ?? 0) - pos.averageCost) * pos.quantity | currency:'USD' }}
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
