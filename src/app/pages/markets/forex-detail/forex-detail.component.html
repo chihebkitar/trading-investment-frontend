@@ -1,0 +1,72 @@
+<!-- src/app/components/forex-detail/forex-detail.component.html -->
+<div class="forex-detail-container" *ngIf="forex">
+    <h2>{{ forex.symbol }} - {{ forex.name }}</h2>
+  
+    <div class="basic-info">
+      <p>Price (in USD): {{ forex.currentPrice | number:'1.4-4' }}</p>
+      <p>Daily Change: 
+        <span [ngClass]="{
+          'pos-change': forex.dailyChangePercent && forex.dailyChangePercent > 0,
+          'neg-change': forex.dailyChangePercent && forex.dailyChangePercent < 0
+        }">
+          {{ forex.dailyChangePercent !== undefined ? (forex.dailyChangePercent | number:'1.2-2') : 'N/A' }}%
+        </span>
+      </p>
+      <p>Day High: {{ forex.dayHigh | number:'1.4-4' }}</p>
+      <p>Day Low: {{ forex.dayLow | number:'1.4-4' }}</p>
+      <p>Currency: {{ forex.currency }}</p>
+    </div>
+  
+    <!-- Chart Interval Toggle -->
+    <div class="chart-interval">
+      <label>Chart Interval:</label>
+      <select [(ngModel)]="currentInterval" (change)="onIntervalChange(currentInterval)">
+        <option value="1d">1 Day</option>
+        <option value="5d">5 Days</option>
+        <option value="1mo">1 Month</option>
+        <option value="6mo">6 Months</option>
+        <option value="1y">1 Year</option>
+        <option value="max">Max</option>
+      </select>
+    </div>
+  
+    <apx-chart
+      [series]="candlestickOptions.series ?? []"
+      [chart]="candlestickOptions.chart ?? { type: 'candlestick', height: 350 }"
+      [xaxis]="candlestickOptions.xaxis ?? { type: 'datetime' }"
+      [yaxis]="candlestickOptions.yaxis ?? { tooltip: { enabled: true } }"
+      [title]="candlestickOptions.title ?? { text: 'Price Candlestick', align: 'left' }"
+    >
+    </apx-chart>
+  
+    <!-- Line Chart -->
+    <div style="display: block; height: 300px;">
+      <canvas
+        baseChart
+        [data]="chartData"
+        [type]="chartType"
+        [options]="chartOptions"
+      ></canvas>
+    </div>
+  
+    <!-- Buy/Sell Form -->
+    <div class="order-form">
+      <h3>Trade {{ forex.symbol }}</h3>
+      <form [formGroup]="orderForm" (ngSubmit)="placeOrder()">
+        <label>Order Type:</label>
+        <select formControlName="orderType">
+          <option value="BUY">BUY</option>
+          <option value="SELL">SELL</option>
+        </select>
+  
+        <label>Quantity:</label>
+        <input type="number" step="any" formControlName="quantity" />
+  
+        <label>or Amount (USD):</label>
+        <input type="number" step="any" formControlName="amount" />
+  
+        <button type="submit" [disabled]="orderForm.invalid">Place Order</button>
+      </form>
+    </div>
+  </div>
+  

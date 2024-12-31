@@ -1,0 +1,42 @@
+<!-- src/app/components/forex-home/forex-home.component.html -->
+<div class="forex-home">
+    <h2>Trending Forex Pairs</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Symbol</th>
+          <th>Name</th>
+          <th>Price (USD)</th>
+          <th>DailyChange%</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let f of trendingForex" [routerLink]="['/markets/forex', f.symbol]">
+          <td>{{ f.symbol }}</td>
+          <td>{{ f.name }}</td>
+          <td>{{ f.currentPrice | number:'1.4-4' }}</td>
+          <td [ngClass]="{
+            'pos-change': f.dailyChangePercent && f.dailyChangePercent > 0,
+            'neg-change': f.dailyChangePercent && f.dailyChangePercent < 0
+          }">
+            {{ f.dailyChangePercent !== undefined ? (f.dailyChangePercent | number:'1.2-2') : 'N/A' }}%
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  
+    <div class="search-section">
+      <h2>Search Forex Pairs</h2>
+      <input [(ngModel)]="query" placeholder="e.g., EURUSD=X" (keyup.enter)="search()"/>
+      <button (click)="search()">Search</button>
+  
+      <div *ngIf="searchResults.length > 0">
+        <ul>
+          <li *ngFor="let r of searchResults" [routerLink]="['/markets/forex', r.symbol]">
+            {{ r.symbol }} - {{ r.name }}
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  

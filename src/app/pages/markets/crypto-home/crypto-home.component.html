@@ -1,0 +1,42 @@
+<!-- src/app/components/crypto-home/crypto-home.component.html -->
+<div class="crypto-home">
+    <h2>Trending Cryptos</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Symbol</th>
+          <th>Name</th>
+          <th>Price</th>
+          <th>DailyChange%</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let c of trendingCryptos" [routerLink]="['/markets/cryptos', c.symbol]">
+          <td>{{ c.symbol }}</td>
+          <td>{{ c.name }}</td>
+          <td>{{ c.currentPrice | number:'1.2-2' }}</td>
+          <td [ngClass]="{
+            'pos-change': c.dailyChangePercent && c.dailyChangePercent > 0,
+            'neg-change': c.dailyChangePercent && c.dailyChangePercent < 0
+          }">
+            {{ c.dailyChangePercent !== undefined ? (c.dailyChangePercent | number:'1.2-2') : 'N/A' }}%
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  
+    <div class="search-section">
+      <h2>Search Cryptos</h2>
+      <input [(ngModel)]="query" placeholder="Symbol" (keyup.enter)="search()"/>
+      <button (click)="search()">Search</button>
+  
+      <div *ngIf="searchResults.length > 0">
+        <ul>
+          <li *ngFor="let r of searchResults" [routerLink]="['/markets/cryptos', r.symbol]">
+            {{ r.symbol }} - {{ r.name }}
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  

@@ -1,0 +1,62 @@
+.commodity-home {
+    background-color: #ffffff;
+    padding: 2rem;
+  
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 2rem;
+  
+      th, td {
+        border: 1px solid #DAF1FF;
+        padding: 0.5rem;
+        text-align: left;
+      }
+  
+      tr {
+        cursor: pointer;
+      }
+  
+      .pos-change {
+        color: green;
+      }
+      .neg-change {
+        color: red;
+      }
+    }
+  
+    .search-section {
+      margin-top: 2rem;
+  
+      input {
+        padding: 0.5rem;
+        border: 1px solid #00A1FF;
+        border-radius: 4px;
+        margin-right: 0.5rem;
+      }
+  
+      button {
+        background-color: #00A1FF;
+        color: #ffffff;
+        border: none;
+        padding: 0.5rem 1rem;
+        cursor: pointer;
+  
+        &:hover {
+          background-color: #0078BF;
+        }
+      }
+  
+      ul {
+        margin-top: 1rem;
+        li {
+          padding: 0.3rem 0;
+          color: #111C2D;
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+      }
+    }
+  }
+  

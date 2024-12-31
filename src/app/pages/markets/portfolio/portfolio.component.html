@@ -1,31 +1,91 @@
-<!-- src/app/components/portfolio/portfolio.component.html -->
+<!-- portfolio.component.html -->
 <div class="portfolio-container" *ngIf="portfolio && user">
   <h2>{{ user.name }}'s Portfolio</h2>
   <p>Balance: {{ user.balance | currency:'USD' }}</p>
   <p>Total Portfolio Value: {{ portfolio.totalValue | currency:'USD' }}</p>
+
+  <!-- Performance Indicators -->
+  <div class="performance-indicators">
+    <div class="indicator-card">
+      <i class="fas fa-chart-line fa-2x"></i>
+      <h4>ROI</h4>
+      <p [ngClass]="{'positive': roi >= 0, 'negative': roi < 0}">
+        {{ roi | number:'1.2-2' }}%
+      </p>
+    </div>
+    <div class="indicator-card">
+      <i class="fas fa-chart-area fa-2x"></i>
+      <h4>CAGR</h4>
+      <p *ngIf="cagr !== null" [ngClass]="{'positive': cagr >= 0, 'negative': cagr < 0}">
+        {{ cagr | number:'1.2-2' }}%
+      </p>
+      <p *ngIf="cagr === null">Insufficient data</p>
+    </div>
+    <div class="indicator-card">
+      <i class="fas fa-balance-scale fa-2x"></i>
+      <h4>Sharpe Ratio</h4>
+      <p>
+        {{ sharpeRatio | number:'1.2-2' }}
+      </p>
+    </div>
+  </div>
+
+  <!-- Chart Type Toggle -->
+  <div class="chart-type-toggle">
+    <button 
+      [ngClass]="{'active-btn': !useApexChart}"
+      (click)="useApexChart = false"
+      aria-label="Switch to ng2-Charts">
+      <i class="fas fa-chart-bar fa-lg"></i>
+    </button>
+    <button 
+      [ngClass]="{'active-btn': useApexChart}"
+      (click)="useApexChart = true"
+      aria-label="Switch to ApexCharts">
+      <i class="fas fa-chart-line fa-lg"></i>
+    </button>
+  </div>
 
   <!-- Resolution Toggle Buttons -->
   <div class="resolution-select">
     <button 
       [ngClass]="{'active': selectedResolution === 'daily'}" 
       (click)="onResolutionChange('daily')">
-      Daily
+      <i class="fas fa-calendar-day"></i> Daily
     </button>
     <button 
       [ngClass]="{'active': selectedResolution === 'intraday'}" 
       (click)="onResolutionChange('intraday')">
-      Intraday
+      <i class="fas fa-clock"></i> Intraday
     </button>
   </div>
 
-  <!-- Evolution Chart -->
+  <!-- Evolution Chart (two versions) -->
   <div class="portfolio-chart">
+    <!-- ng2-charts version -->
     <canvas
+      *ngIf="!useApexChart"
       baseChart
       [data]="chartData"
       [type]="chartType"
       [options]="chartOptions"
+      class="responsive-chart"
     ></canvas>
+
+    <!-- ApexCharts version -->
+    <apx-chart
+      *ngIf="useApexChart"
+      [series]="apexChartOptions.series ?? []"
+      [chart]="apexChartOptions.chart ?? { type: 'line', height: 350 }"
+      [xaxis]="apexChartOptions.xaxis ?? { type: 'datetime' }"
+      [yaxis]="apexChartOptions.yaxis ?? { tooltip: { enabled: true } }"
+      [title]="apexChartOptions.title ?? { text: 'Portfolio Value Over Time', align: 'left' }"
+      [stroke]="apexChartOptions.stroke ?? { curve: 'smooth', width: 2 }" 
+      [colors]="apexChartOptions.colors ?? ['#00A1FF', '#FF5733']"
+      [tooltip]="apexChartOptions.tooltip ?? { enabled: true }"
+      class="responsive-chart"
+    >
+    </apx-chart>
   </div>
 
   <h3>Positions</h3>
